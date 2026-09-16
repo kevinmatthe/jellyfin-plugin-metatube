@@ -2,20 +2,42 @@
 """Check a release build locally or in CI without fetching/publishing the catalog."""
 import argparse
 import hashlib
+import json
+import re
+import subprocess
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from zipfile import ZipFile
 
 from manifest import generate
 
 
+def expected_jellyfin_abi(csproj):
+    # Read independently of the manifest helper so its parsing is also checked.
+    references = list(ET.parse(csproj).getroot().iter('PackageReference'))
+    versions = []
+    for name in ('Jellyfin.Controller', 'Jellyfin.Model'):
+        matches = [item.get('Version') for item in references if item.get('Include') == name]
+        if len(matches) != 1 or not re.fullmatch(r'\d+\.\d+\.\d+', matches[0] or ''):
+            raise ValueError(f'Expected exactly one {name} reference with a stable three-part version')
+        versions.append(matches[0])
+    if versions[0] != versions[1]:
+        raise ValueError('Jellyfin.Controller and Jellyfin.Model versions must match')
+    return f'{versions[0]}.0'
+
+
 def validate(configuration, version):
     project = Path(__file__).resolve().parents[1] / 'Jellyfin.Plugin.MetaTube'
-    platform, framework = {
-        'Release': ('Jellyfin', 'net10.0'),
-        'Release.Emby': ('Emby', 'net8.0'),
-    }[configuration]
-    archive_path = project / 'bin' / f'{platform}.MetaTube@v{version}.zip'
-    assembly_path = project / 'bin' / configuration / framework / 'MetaTube.dll'
+    csproj = project / 'Jellyfin.Plugin.MetaTube.csproj'
+    platform = {'Release': 'Jellyfin', 'Release.Emby': 'Emby'}[configuration]
+    # Ask MSBuild for evaluated paths instead of duplicating framework/output settings.
+    properties = json.loads(subprocess.check_output([
+        'dotnet', 'msbuild', str(csproj),
+        f'-property:Configuration={configuration}', f'-property:Version={version}',
+        '-getProperty:TargetPath,BaseOutputPath',
+    ], cwd=project, text=True))['Properties']
+    archive_path = project / properties['BaseOutputPath'] / f'{platform}.MetaTube@v{version}.zip'
+    assembly_path = project / properties['TargetPath']
 
     with ZipFile(archive_path) as archive:
         if archive.namelist() != ['MetaTube.dll']:
@@ -25,11 +47,11 @@ def validate(configuration, version):
             raise ValueError(f'{archive_path.name} differs from the built assembly')
 
     if platform == 'Jellyfin':
+        target_abi = expected_jellyfin_abi(csproj)
         # Exercise the release helper directly; main() fetches the live catalog.
-        entry = generate(str(archive_path), version,
-                         str(project / 'Jellyfin.Plugin.MetaTube.csproj'))
+        entry = generate(str(archive_path), version, str(csproj))
         expected = {
-            'targetAbi': '12.0.0.0',
+            'targetAbi': target_abi,
             'version': version,
             'checksum': hashlib.md5(archive_path.read_bytes()).hexdigest(),
             'sourceUrl': (
