@@ -9,11 +9,16 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     env:
-      PLUGIN_VERSION: 0.0.0.0
+      # Validation-only version keeps build and package filenames consistent.
+      PLUGIN_VERSION: '0.0.0.0'
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest]
         configuration: [Release, Release.Emby]
     steps:
       - uses: actions/checkout@v4
