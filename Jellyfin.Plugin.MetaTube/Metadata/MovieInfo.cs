@@ -4,6 +4,12 @@ namespace Jellyfin.Plugin.MetaTube.Metadata;
 
 public class MovieInfo : MovieSearchResult
 {
+    [JsonPropertyName("ratings")]
+    public MovieRating[] Ratings { get; set; } = Array.Empty<MovieRating>();
+
+    [JsonPropertyName("tags")]
+    public MovieTag[] Tags { get; set; } = Array.Empty<MovieTag>();
+
     [JsonPropertyName("big_cover_url")]
     public string BigCoverUrl { get; set; }
 

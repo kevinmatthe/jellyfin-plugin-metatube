@@ -1,0 +1,24 @@
+{
+  "data": {
+    "items": [
+      {
+        "id": "review-1",
+        "source": "Fixture",
+        "scale_max": 5,
+        "helpful_count": 2,
+        "title": "Example",
+        "author": "Reader",
+        "comment": "Neutral review \u003cscript\u003ealert('fixture')\u003c/script\u003e",
+        "score": 4,
+        "date": "2026-10-19T12:00:00Z"
+      }
+    ],
+    "offset": 0,
+    "limit": 10,
+    "has_more": false,
+    "total": null,
+    "paginated": true,
+    "fetched_at": "2026-10-19T12:00:00Z",
+    "cached": true
+  }
+}

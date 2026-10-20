@@ -1,0 +1,72 @@
+{
+  "data": {
+    "id": "sample-1",
+    "number": "SAMPLE-1",
+    "title": "Neutral fixture",
+    "summary": "",
+    "provider": "Fixture",
+    "homepage": "https://example.invalid/movie/sample-1",
+    "director": "",
+    "actors": null,
+    "thumb_url": "",
+    "big_thumb_url": "",
+    "cover_url": "https://example.invalid/cover.jpg",
+    "big_cover_url": "",
+    "preview_video_url": "",
+    "preview_video_hls_url": "",
+    "preview_images": null,
+    "maker": "Example studio",
+    "label": "",
+    "series": "Example series",
+    "genres": [
+      "Sample"
+    ],
+    "score": 4.2,
+    "ratings": [
+      {
+        "source": "Fixture",
+        "source_id": "sample-1",
+        "value": 4.2,
+        "scale_max": 5,
+        "vote_count": 12,
+        "review_count": 3,
+        "distribution": [
+          {
+            "value": 5,
+            "count": 7
+          }
+        ],
+        "fetched_at": "2026-10-19T12:00:00Z"
+      },
+      {
+        "source": "OtherFixture",
+        "source_id": "sample-2",
+        "value": 8,
+        "scale_max": 10,
+        "vote_count": null,
+        "review_count": null,
+        "distribution": null,
+        "fetched_at": "2026-10-19T12:00:00Z"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Sample",
+        "category": "genre",
+        "source": "Fixture"
+      },
+      {
+        "name": "Example series",
+        "category": "series",
+        "source": "Fixture"
+      },
+      {
+        "name": "Example studio",
+        "category": "maker",
+        "source": "Fixture"
+      }
+    ],
+    "runtime": 0,
+    "release_date": "0001-01-01T00:00:00Z"
+  }
+}

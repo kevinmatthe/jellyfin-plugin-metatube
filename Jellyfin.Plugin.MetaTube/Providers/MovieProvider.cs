@@ -141,7 +141,7 @@ public class MovieProvider : BaseProvider, IRemoteMetadataProvider<Movie, MovieI
 
         // Set community rating.
         if (Configuration.EnableRatings)
-            result.Item.CommunityRating = m.Score > 0 ? (float)Math.Round(m.Score * 2, 1) : null;
+            result.Item.CommunityRating = MetadataMapping.GetCommunityRating(m);
 
         // Add collection.
         if (Configuration.EnableCollections && !string.IsNullOrWhiteSpace(m.Series))
@@ -154,17 +154,8 @@ public class MovieProvider : BaseProvider, IRemoteMetadataProvider<Movie, MovieI
         if (!string.IsNullOrWhiteSpace(m.Maker))
             result.Item.AddStudio(m.Maker);
 
-        // Add tag (series).
-        if (!string.IsNullOrWhiteSpace(m.Series))
-            result.Item.AddTag(m.Series);
-
-        // Add tag (maker).
-        if (!string.IsNullOrWhiteSpace(m.Maker))
-            result.Item.AddTag(m.Maker);
-
-        // Add tag (label).
-        if (!string.IsNullOrWhiteSpace(m.Label))
-            result.Item.AddTag(m.Label);
+        foreach (var tag in MetadataMapping.GetNativeTags(m))
+            result.Item.AddTag(tag);
 
         // Add director.
         if (Configuration.EnableDirectors && !string.IsNullOrWhiteSpace(m.Director))

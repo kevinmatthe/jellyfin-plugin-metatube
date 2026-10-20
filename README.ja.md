@@ -1,6 +1,10 @@
 <h1 align="center">Jellyfin Plugin MetaTube</h1>
 <p align="center"><b><a href="README.md">English</a> | 日本語</b></p>
 
+> **拡張 Fork**：このリポジトリは [metatube-community/jellyfin-plugin-metatube](https://github.com/metatube-community/jellyfin-plugin-metatube) を基にした改造版です。`feat/metadata-enrichment` ブランチでは、Jellyfin Web の作品詳細ページに取得元の評価とコメントを追加しています。[対応する Go バックエンド Fork](https://github.com/kevinmatthe/metatube-sdk-go/tree/feat/metadata-enrichment) の同名ブランチが必要です。
+
+追加機能：詳細ページを開いた際のコメント取得、ページ単位の永続キャッシュ、手動更新、任意の JAVDB 連携、リクエスト間隔と制限後の待機、ダウンロードリンクの除去。JAVDB 連携は初期状態では無効です。Web パネルの実サーバー検証と AI 要約の実装は未完了です。[導入手順（中国語）](docs/deployment.md)と[機能説明（中国語）](docs/development/metadata-enrichment.md)を参照してください。
+
 <p align="center">
 <img alt="Plugin Banner" src="https://metatube-community.github.io/images/banner-dark.png"/>
 <br/>

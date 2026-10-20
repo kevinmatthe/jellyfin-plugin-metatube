@@ -44,6 +44,9 @@
     <ItemGroup Condition="'$(Configuration)'=='Debug' or '$(Configuration)'=='Release'">
         <None Remove="Configuration\configPage.html"/>
         <EmbeddedResource Include="Configuration\configPage.html"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <EmbeddedResource Include="Web\metadata.js"/>
+        <EmbeddedResource Include="Web\metadata.css"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug.Emby' or '$(Configuration)'=='Release.Emby'">

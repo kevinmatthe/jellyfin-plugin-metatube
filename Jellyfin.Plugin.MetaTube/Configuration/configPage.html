@@ -60,6 +60,22 @@
 
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
+                            <input id="chkEnableExtendedMetadata" is="emby-checkbox" name="chkEnableExtendedMetadata" type="checkbox"/>
+                            <span>Show source ratings and reviews</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Load reviews when opening a movie detail page. Saved review pages are reused until manually refreshed.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="chkEnableJavdbMetadata" is="emby-checkbox" name="chkEnableJavdbMetadata" type="checkbox"/>
+                            <span>Use JAVDB ratings and reviews</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Add JAVDB ratings and use its comments on movie detail pages. Requires the optional JAVDB CLI provider on your backend. Saved comments are reused; library scans do not fetch them.</div>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
                             <input id="chkEnableTrailers" is="emby-checkbox" name="chkEnableTrailers" type="checkbox"/>
                             <span>Enable trailers</span>
                         </label>
@@ -346,6 +362,8 @@
                 page.querySelector('#chkEnableCollections').checked = config.EnableCollections;
                 page.querySelector('#chkEnableDirectors').checked = config.EnableDirectors;
                 page.querySelector('#chkEnableRatings').checked = config.EnableRatings;
+                page.querySelector('#chkEnableExtendedMetadata').checked = config.EnableExtendedMetadata !== false;
+                page.querySelector('#chkEnableJavdbMetadata').checked = config.EnableJavdbMetadata === true;
                 page.querySelector('#chkEnableTrailers').checked = config.EnableTrailers;
                 page.querySelector('#chkEnableRealActorNames').checked = config.EnableRealActorNames;
                 page.querySelector('#chkEnableBadges').checked = config.EnableBadges;
@@ -387,6 +405,8 @@
                 config.EnableCollections = $('#chkEnableCollections', form).prop('checked');
                 config.EnableDirectors = $('#chkEnableDirectors', form).prop('checked');
                 config.EnableRatings = $('#chkEnableRatings', form).prop('checked');
+                config.EnableExtendedMetadata = $('#chkEnableExtendedMetadata', form).prop('checked');
+                config.EnableJavdbMetadata = $('#chkEnableJavdbMetadata', form).prop('checked');
                 config.EnableTrailers = $('#chkEnableTrailers', form).prop('checked');
                 config.EnableRealActorNames = $('#chkEnableRealActorNames', form).prop('checked');
                 config.EnableBadges = $('#chkEnableBadges', form).prop('checked');

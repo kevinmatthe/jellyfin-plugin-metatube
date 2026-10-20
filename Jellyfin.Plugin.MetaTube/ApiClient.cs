@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Web;
 using Jellyfin.Plugin.MetaTube.Metadata;
+using Jellyfin.Plugin.MetaTube.Helpers;
 #if __EMBY__
 using MediaBrowser.Common.Net;
 #endif
@@ -37,7 +38,7 @@ public static class ApiClient
     private static string ComposeImageApiUrl(string path, string provider, string id, string url = default,
         double ratio = -1, double position = -1, bool auto = false, string badge = default)
     {
-        return ComposeUrl(Path.Combine(path, provider, id), new NameValueCollection
+        return ComposeUrl(MetadataMapping.BuildBackendPath(path, provider, id), new NameValueCollection
         {
             { "url", url },
             { "ratio", ratio.ToString("R") },
@@ -50,7 +51,7 @@ public static class ApiClient
 
     private static string ComposeInfoApiUrl(string path, string provider, string id, bool lazy)
     {
-        return ComposeUrl(Path.Combine(path, provider, id), new NameValueCollection
+        return ComposeUrl(MetadataMapping.BuildBackendPath(path, provider, id), new NameValueCollection
         {
             { "lazy", lazy.ToString() }
         });
@@ -208,12 +209,25 @@ public static class ApiClient
         return await GetDataAsync<TranslationInfo>(apiUrl, false, cancellationToken);
     }
 
+    public static Task<MovieReviewPage> GetMovieReviewPageAsync(string provider, string id, int offset,
+        int limit, bool lazy, CancellationToken cancellationToken)
+    {
+        var path = MetadataMapping.BuildBackendPath("/v1/reviews", provider, id) + "/page";
+        var url = ComposeUrl(path, new NameValueCollection
+        {
+            { "offset", offset.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+            { "limit", limit.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+            { "lazy", lazy ? "true" : "false" }
+        });
+        return GetDataAsync<MovieReviewPage>(url, true, cancellationToken);
+    }
+
     private static async Task<T> GetDataAsync<T>(string url, bool requireAuth,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
 
         // Add General Headers.
         request.Headers.Add("Accept", "application/json");
@@ -224,7 +238,10 @@ public static class ApiClient
             request.Headers.Authorization =
                 new AuthenticationHeaderValue("Bearer", Plugin.Instance.Configuration.Token);
 
-        var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        using var response = await HttpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException("MetaTube backend request failed", null, response.StatusCode);
 
         // Nullable forgiving reason:
         // Response is unlikely to be null.
@@ -232,14 +249,9 @@ public static class ApiClient
         var apiResponse = (await response.Content!
             .ReadFromJsonAsync<ResponseInfo<T>>(cancellationToken: cancellationToken).ConfigureAwait(false))!;
 
-        // EnsureSuccessStatusCode ignoring reason:
-        // When the status is unsuccessful, the API response contains error details.
-        if (!response.IsSuccessStatusCode && apiResponse.Error != null)
-            throw new Exception($"API request error: {apiResponse.Error.Code} ({apiResponse.Error.Message})");
-
         // Note: data field must not be null if there are no errors.
-        if (apiResponse.Data == null)
-            throw new Exception("Response data field is null");
+        if (apiResponse == null || apiResponse.Data == null)
+            throw new System.Text.Json.JsonException("Response data field is null");
 
         return apiResponse.Data;
     }

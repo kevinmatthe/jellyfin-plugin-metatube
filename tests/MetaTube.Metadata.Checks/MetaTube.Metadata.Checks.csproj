@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Jellyfin.Plugin.MetaTube/Jellyfin.Plugin.MetaTube.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Content Include="../fixtures/metadata_movie.json" Link="metadata_movie.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../fixtures/metadata_review_page.json" Link="metadata_review_page.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

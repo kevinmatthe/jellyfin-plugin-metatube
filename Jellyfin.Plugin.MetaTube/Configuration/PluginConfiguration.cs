@@ -57,6 +57,11 @@ public class PluginConfiguration : BasePluginConfiguration
 #endif
     public bool EnableRatings { get; set; } = true;
 
+#if !__EMBY__
+    public bool EnableExtendedMetadata { get; set; } = true;
+    public bool EnableJavdbMetadata { get; set; } = false;
+#endif
+
 #if __EMBY__
     [DisplayName("Enable trailers")]
     [Description("Generate online video trailers in strm format.")]
